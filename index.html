@@ -1,142 +1,147 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <title>Learning Scenario UI</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
-  <style>
-    body { font-family: 'Noto Sans JP', sans-serif; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学習シナリオ - Piano Learning</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        body { font-family: 'Noto Sans JP', sans-serif; background-color: #f8fafc; }
+        .custom-shadow { box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1); }
+        .modal-gradient { background: linear-gradient(180deg, #5AC8FA 0%, #34AADC 100%); }
+    </style>
 </head>
-<body class="bg-gray-100">
+<body>
+    <div id="root"></div>
 
-<script>
-const data = {
-  header_info: {
-    platform: "2nd Community",
-    title: "音楽教本 ぴあのどりーむ1",
-    subtitle: "概要",
-    description: "この文章はダミーです。文字の大きさ、量、字間、行間等を確認するために入れています。",
-    book_info: {
-      series: "Arts & Design",
-      brand: "EYS-Kids ArtsDesign",
-      target_age: "3〜5",
-      publish_date: "2021/01/01",
-      rating: 5.0,
-      review_score: 4.8
-    }
-  },
-  main_table_data: [/* SAME DATA AS PROVIDED */],
-  popup_content: {
-    title: "くるみわりをえんそうしよう",
-    instructor: "鈴木 太郎",
-    date: "2022.07.13",
-    description: "この演奏はリズム、強弱、テンポを意識して演奏します。",
-    media: { image: true, video: true }
-  }
-};
-</script>
+    <script type="text/babel">
+        // 1. DATA-DRIVEN: DỮ LIỆU JSON CHI TIẾT
+        const data = {
+            "header_info": {
+                "title": "学習シナリオ",
+                "subtitle": "音楽教本 ぴあのどりーむ1",
+                "description": "この文章はダミーです。文字の大きさ、量、字間、行間等を確認するために入れています。"
+            },
+            "columns": ["2024年 4月", "2024年 5月", "2024年 6月", "2024年 7月"],
+            "main_table_data": [
+                { "id": 1, "time_index": "0:25", "title": "1 ひだりてのゆびのたいそう", "status": "completed", "has_video_icon": false, "bg": "#FFF5F5" },
+                { "id": 2, "time_index": "0:50", "title": "2 ゆびのたいそう", "status": "completed", "has_video_icon": false, "bg": "#FFF5F5" },
+                { "id": 3, "time_index": "0:60", "title": "3 まんなかのドのれんしゅう", "status": "active", "has_video_icon": true, "bg": "#FFF5F5" },
+                { "id": 4, "time_index": "0:70", "title": "4 ひだりてのれんしゅう", "status": "pending", "has_video_icon": false, "bg": "#ffffff" },
+                { "id": 5, "time_index": "1:00", "title": "5 みぎてのれんしゅう", "status": "pending", "has_video_icon": false, "bg": "#ffffff" },
+                { "id": 14, "time_index": "0:60", "title": "14 くるみわり", "status": "active", "has_video_icon": true, "bg": "#EBF8FF" },
+                { "id": 15, "time_index": "0:70", "title": "15 おおきなたいこ", "status": "pending", "has_video_icon": false, "bg": "#FFF5F5" },
+                { "id": 16, "time_index": "1:00", "title": "16 おどるこねこ", "status": "pending", "has_video_icon": false, "bg": "#FFF5F5" }
+            ],
+            "popup_content": {
+                "anchor_id": 14, 
+                "title": "くるみわりをえんそうしよう",
+                "instructor": "鈴木 太郎",
+                "role": "スキル認定インストラクター",
+                "date": "2022.07.13",
+                "description": "この演奏はリズム、強弱、テンポを意識して演奏します。"
+            }
+        };
 
-<div id="app" class="max-w-5xl mx-auto p-6"></div>
+        // 2. RENDER LOGIC
+        const App = () => {
+            return (
+                <div className="max-w-6xl mx-auto py-12 px-4">
+                    {/* Header Section */}
+                    <div className="text-center mb-10">
+                        <h1 className="text-2xl font-bold text-[#1A365D] inline-block border-b-4 border-[#1A365D] pb-1 px-4 mb-2">
+                            {data.header_info.title}
+                        </h1>
+                        <p className="text-gray-500 text-sm italic">{data.header_info.subtitle}</p>
+                    </div>
 
-<script>
-const app = document.getElementById("app");
+                    {/* Table Container */}
+                    <div className="bg-white border border-gray-300 rounded shadow-sm relative overflow-hidden">
+                        
+                        {/* Header Grid */}
+                        <div className="grid grid-cols-6 bg-[#4A5568] text-white font-bold text-center border-b border-gray-300">
+                            <div className="py-4 border-r border-gray-500">学習時間</div>
+                            {data.columns.map((month, i) => (
+                                <div key={i} className="py-2 border-r border-gray-500">
+                                    <div className="text-[10px] font-normal opacity-70">頁 目次</div>
+                                    <div className="text-xs">{month}</div>
+                                </div>
+                            ))}
+                            <div className="py-4">備考</div>
+                        </div>
 
-// HEADER
-const header = `
-  <div class="bg-[#4A5568] text-white p-4 rounded-lg mb-6">
-    <div class="text-sm">${data.header_info.platform}</div>
-    <h1 class="text-xl font-bold">${data.header_info.title}</h1>
-  </div>
+                        {/* Body Grid */}
+                        <div className="divide-y divide-gray-200">
+                            {data.main_table_data.map((row) => (
+                                <div key={row.id} className="grid grid-cols-6 items-stretch min-h-[50px] relative">
+                                    {/* Time Col */}
+                                    <div className="bg-[#EDF2F7] flex items-center justify-center font-bold text-blue-800 border-r border-gray-200 text-sm">
+                                        {row.time_index}
+                                    </div>
+                                    
+                                    {/* Content Col */}
+                                    <div 
+                                        className="p-2 border-r border-gray-200 flex items-center justify-between"
+                                        style={{ backgroundColor: row.bg }}
+                                    >
+                                        <span className="text-[11px] font-bold truncate">{row.title}</span>
+                                        <div className="flex gap-1 ml-1 shrink-0">
+                                            {row.status === 'completed' && <span className="text-green-500">✔</span>}
+                                            {row.has_video_icon && <span className="text-red-500 text-[10px]">▶</span>}
+                                        </div>
+                                    </div>
 
-  <div class="bg-white rounded-lg p-6 mb-6 shadow">
-    <h2 class="text-blue-500 font-semibold mb-2">${data.header_info.subtitle}</h2>
-    <p class="text-gray-600 mb-4">${data.header_info.description}</p>
+                                    {/* Empty Cells for alignment */}
+                                    <div className="border-r border-gray-100 bg-white"></div>
+                                    <div className="border-r border-gray-100 bg-white"></div>
+                                    <div className="border-r border-gray-100 bg-white"></div>
+                                    <div className="bg-white"></div>
 
-    <div class="grid grid-cols-2 gap-4 text-sm">
-      <div>シリーズ: ${data.header_info.book_info.series}</div>
-      <div>ブランド: ${data.header_info.book_info.brand}</div>
-      <div>対象年齢: ${data.header_info.book_info.target_age}</div>
-      <div>出版日: ${data.header_info.book_info.publish_date}</div>
-      <div>評価: ⭐ ${data.header_info.book_info.rating}</div>
-      <div>レビュー: ${data.header_info.book_info.review_score}</div>
-    </div>
-  </div>
-`;
+                                    {/* Render Modal if anchor matches */}
+                                    {data.popup_content.anchor_id === row.id && (
+                                        <div className="absolute top-1/2 left-[15%] z-50 w-[300px] -translate-y-1/4 bg-white rounded-xl custom-shadow border-2 border-blue-200 overflow-hidden">
+                                            <div className="modal-gradient p-3 flex justify-between items-center text-white">
+                                                <span className="text-xs font-bold">{data.popup_content.title}</span>
+                                                <span className="cursor-pointer text-sm">✕</span>
+                                            </div>
+                                            <div className="p-4">
+                                                <div className="flex items-center gap-3 mb-3">
+                                                    <div className="w-10 h-10 bg-blue-50 rounded-full border border-blue-100 flex items-center justify-center text-blue-400 text-[10px] font-bold">Photo</div>
+                                                    <div>
+                                                        <div className="text-[9px] text-blue-400 font-bold uppercase">{data.popup_content.role}</div>
+                                                        <div className="font-bold text-gray-800 text-sm">{data.popup_content.instructor}</div>
+                                                        <div className="text-[9px] text-gray-400 italic">Achieved: {data.popup_content.date}</div>
+                                                    </div>
+                                                </div>
+                                                <p className="text-[10px] text-gray-500 leading-relaxed mb-4 bg-blue-50/50 p-2 rounded">
+                                                    {data.popup_content.description}
+                                                </p>
+                                                <div className="grid grid-cols-2 gap-2 mb-4">
+                                                    <div className="aspect-video bg-gray-100 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-200">
+                                                        <span className="text-gray-400">▶</span>
+                                                    </div>
+                                                    <div className="aspect-video bg-gray-100 rounded-lg border-2 border-dashed border-gray-200"></div>
+                                                </div>
+                                                <button className="w-full bg-[#007AFF] text-white text-[10px] py-2 rounded-full font-bold hover:bg-blue-600 transition-colors shadow-lg shadow-blue-100">
+                                                    レッスンを開始する
+                                                </button>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            );
+        };
 
-// TABLE
-let tableRows = "";
-data.main_table_data.forEach(row => {
-  tableRows += `
-    <div class="grid grid-cols-5 items-center text-sm border-b relative"
-         style="background:${row.background_color}">
-      <div class="p-2">${row.id}</div>
-      <div class="p-2">${row.time_index}</div>
-      <div class="p-2">${row.title}</div>
-      <div class="p-2">
-        ${row.status === 'completed' ? '✅' : row.status === 'active' ? '🟡' : '⬜'}
-      </div>
-      <div class="p-2">
-        ${row.has_video_icon ? '▶️' : ''}
-      </div>
-    </div>
-  `;
-});
-
-const table = `
-  <div class="bg-white rounded-lg shadow overflow-hidden relative">
-    <div class="grid grid-cols-5 bg-gray-200 text-sm font-semibold">
-      <div class="p-2">ID</div>
-      <div class="p-2">Time</div>
-      <div class="p-2">Title</div>
-      <div class="p-2">Status</div>
-      <div class="p-2">Video</div>
-    </div>
-    ${tableRows}
-
-    ${renderPopup()}
-  </div>
-`;
-
-// POPUP (attached to active highlighted row)
-function renderPopup() {
-  const activeRow = data.main_table_data.find(r => r.is_highlighted);
-  if (!activeRow) return "";
-
-  const index = data.main_table_data.indexOf(activeRow);
-
-  return `
-    <div class="absolute left-1/2 -translate-x-1/2 w-80 bg-white shadow-xl rounded-lg p-4 border"
-         style="top:${(index + 1) * 48}px">
-      <div class="flex justify-between items-center mb-2">
-        <h3 class="font-semibold text-blue-500">${data.popup_content.title}</h3>
-        <span class="text-gray-400 cursor-pointer">✕</span>
-      </div>
-      <div class="text-sm text-gray-600 mb-2">
-        👤 ${data.popup_content.instructor}
-      </div>
-      <div class="text-xs text-gray-400 mb-2">
-        ${data.popup_content.date}
-      </div>
-      <p class="text-sm mb-3">${data.popup_content.description}</p>
-
-      ${data.popup_content.media.image ? `
-        <div class="bg-gray-200 h-24 mb-2 rounded"></div>
-      ` : ''}
-
-      ${data.popup_content.media.video ? `
-        <div class="bg-gray-300 h-24 flex items-center justify-center rounded">
-          ▶
-        </div>
-      ` : ''}
-    </div>
-  `;
-}
-
-// RENDER
-app.innerHTML = header + table;
-</script>
-
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
 </body>
 </html>
