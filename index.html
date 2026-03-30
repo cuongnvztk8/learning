@@ -1,146 +1,142 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>学習シナリオ Pro - JSON Data Driven</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Noto Sans JP', sans-serif; }
-        .modal-shadow { box-shadow: 0 30px 60px -12px rgba(50, 50, 93, 0.25), 0 18px 36px -18px rgba(0, 0, 0, 0.3); }
-    </style>
+  <meta charset="UTF-8">
+  <title>Learning Scenario UI</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Noto Sans JP', sans-serif; }
+  </style>
 </head>
-<body class="bg-[#F7FAFC]">
-    <div id="root"></div>
+<body class="bg-gray-100">
 
-    <script type="text/babel">
-        // 1. DỮ LIỆU JSON CHI TIẾT CỦA BẠN
-        const fullConfig = {
-            "page_config": {
-                "title": "学習シナリオ",
-                "header_bg": "#4A5568",
-                "columns": [
-                    { "id": "time", "label": "学習時間", "sub": "" },
-                    { "id": "m4", "label": "2024年 4月", "sub": "頁 目次" },
-                    { "id": "m5", "label": "2024年 5月", "sub": "頁 目次" },
-                    { "id": "m6", "label": "2024年 6月", "sub": "頁 目次" },
-                    { "id": "m7", "label": "2024年 7月", "sub": "頁 目次" },
-                    { "id": "note", "label": "備考", "sub": "" }
-                ]
-            },
-            "curriculum_data": [
-                { "id": 1, "time": "0.25", "title": "1 ひだりてのゆびばんごうを...", "status": "completed" },
-                { "id": 2, "time": "0.50", "title": "2 ゆびのうた", "status": "completed" },
-                { "id": 3, "time": "0.60", "title": "3 みぎてのゆびばんごうを...", "status": "video" },
-                { "id": 4, "time": "0.70", "title": "4 「ど」をおぼえましょう", "status": "active" },
-                { "id": 5, "time": "0.80", "title": "5 あひるのさんぽ", "status": "pending" },
-                { "id": 11, "time": "1.10", "title": "11 いちばんぼし", "status": "video" }
-            ],
-            "popup": {
-                "target_id": 4,
-                "title": "「ど」をおぼえましょう",
-                "instructor": "鈴木 太郎",
-                "role": "スキル認定インストラクター",
-                "date": "2022.07.13",
-                "desc": "この文章はダミーです。文字の大きさ、量、字間、行間等を確認するために入れています。"
-            }
-        };
+<script>
+const data = {
+  header_info: {
+    platform: "2nd Community",
+    title: "音楽教本 ぴあのどりーむ1",
+    subtitle: "概要",
+    description: "この文章はダミーです。文字の大きさ、量、字間、行間等を確認するために入れています。",
+    book_info: {
+      series: "Arts & Design",
+      brand: "EYS-Kids ArtsDesign",
+      target_age: "3〜5",
+      publish_date: "2021/01/01",
+      rating: 5.0,
+      review_score: 4.8
+    }
+  },
+  main_table_data: [/* SAME DATA AS PROVIDED */],
+  popup_content: {
+    title: "くるみわりをえんそうしよう",
+    instructor: "鈴木 太郎",
+    date: "2022.07.13",
+    description: "この演奏はリズム、強弱、テンポを意識して演奏します。",
+    media: { image: true, video: true }
+  }
+};
+</script>
 
-        const App = () => {
-            const { page_config, curriculum_data, popup } = fullConfig;
+<div id="app" class="max-w-5xl mx-auto p-6"></div>
 
-            return (
-                <div className="py-12 px-4">
-                    {/* Header Title */}
-                    <h1 className="text-center text-2xl font-bold text-[#1A365D] mb-10 relative inline-block left-1/2 -translate-x-1/2">
-                        {page_config.title}
-                        <span className="absolute bottom--2 left-0 w-full h-1 bg-[#1A365D]"></span>
-                    </h1>
+<script>
+const app = document.getElementById("app");
 
-                    <div className="max-w-6xl mx-auto bg-white border border-gray-300 shadow-sm relative">
-                        {/* Dynamic Table Header */}
-                        <div className="grid grid-cols-6 bg-[#4A5568] text-white">
-                            {page_config.columns.map((col, i) => (
-                                <div key={i} className="border-r border-gray-500 py-3 text-center">
-                                    <div className="text-[10px] font-light opacity-80">{col.sub}</div>
-                                    <div className="text-sm font-bold">{col.label}</div>
-                                </div>
-                            ))}
-                        </div>
+// HEADER
+const header = `
+  <div class="bg-[#4A5568] text-white p-4 rounded-lg mb-6">
+    <div class="text-sm">${data.header_info.platform}</div>
+    <h1 class="text-xl font-bold">${data.header_info.title}</h1>
+  </div>
 
-                        {/* Dynamic Table Body */}
-                        <div className="divide-y divide-gray-200">
-                            {curriculum_data.map((item) => (
-                                <div key={item.id} className="grid grid-cols-6 items-stretch min-h-[55px]">
-                                    {/* Column 1: Time */}
-                                    <div className="bg-[#EDF2F7] flex items-center justify-center font-bold text-blue-800 border-r border-gray-200">
-                                        {item.time}
-                                    </div>
-                                    
-                                    {/* Column 2: Content (Highlight logic) */}
-                                    <div className={`p-3 border-r border-gray-200 flex justify-between items-center ${item.id <= 4 ? 'bg-[#FFF5F5]' : 'bg-white'}`}>
-                                        <span className="text-xs font-bold truncate">{item.title}</span>
-                                        <div className="flex shrink-0 ml-1">
-                                            {item.status === 'completed' && <span className="text-green-500 font-bold">✔</span>}
-                                            {item.status === 'video' && <span className="text-red-500 text-xs">▶</span>}
-                                        </div>
-                                    </div>
+  <div class="bg-white rounded-lg p-6 mb-6 shadow">
+    <h2 class="text-blue-500 font-semibold mb-2">${data.header_info.subtitle}</h2>
+    <p class="text-gray-600 mb-4">${data.header_info.description}</p>
 
-                                    {/* Column 3-6: Empty placeholders */}
-                                    <div className="border-r border-gray-100 bg-white"></div>
-                                    <div className="border-r border-gray-100 bg-white"></div>
-                                    <div className="border-r border-gray-100 bg-white"></div>
-                                    <div className="bg-white"></div>
-                                </div>
-                            ))}
-                        </div>
+    <div class="grid grid-cols-2 gap-4 text-sm">
+      <div>シリーズ: ${data.header_info.book_info.series}</div>
+      <div>ブランド: ${data.header_info.book_info.brand}</div>
+      <div>対象年齢: ${data.header_info.book_info.target_age}</div>
+      <div>出版日: ${data.header_info.book_info.publish_date}</div>
+      <div>評価: ⭐ ${data.header_info.book_info.rating}</div>
+      <div>レビュー: ${data.header_info.book_info.review_score}</div>
+    </div>
+  </div>
+`;
 
-                        {/* Modal Popup - Anchored to ID 4 */}
-                        <div className="absolute top-[215px] left-[18%] w-[320px] bg-white rounded-2xl modal-shadow border border-blue-100 overflow-hidden z-50">
-                            <div className="bg-[#5AC8FA] p-3 flex justify-between items-center text-white font-bold">
-                                <span className="text-sm">{popup.title}</span>
-                                <span className="cursor-pointer opacity-70 hover:opacity-100">✕</span>
-                            </div>
-                            
-                            <div className="p-6">
-                                <div className="flex items-center gap-4 mb-4">
-                                    <div className="w-12 h-12 bg-blue-50 rounded-full border-2 border-blue-200 flex items-center justify-center text-blue-400 font-bold">
-                                        Icon
-                                    </div>
-                                    <div>
-                                        <div className="text-[9px] text-blue-400 font-bold uppercase">{popup.role}</div>
-                                        <div className="font-bold text-gray-800">{popup.instructor}</div>
-                                        <div className="text-[9px] text-gray-400">{popup.date}</div>
-                                    </div>
-                                </div>
-                                
-                                <p className="text-[11px] text-gray-500 leading-relaxed mb-6 bg-blue-50/50 p-3 rounded-lg border-l-4 border-blue-300">
-                                    {popup.desc}
-                                </p>
+// TABLE
+let tableRows = "";
+data.main_table_data.forEach(row => {
+  tableRows += `
+    <div class="grid grid-cols-5 items-center text-sm border-b relative"
+         style="background:${row.background_color}">
+      <div class="p-2">${row.id}</div>
+      <div class="p-2">${row.time_index}</div>
+      <div class="p-2">${row.title}</div>
+      <div class="p-2">
+        ${row.status === 'completed' ? '✅' : row.status === 'active' ? '🟡' : '⬜'}
+      </div>
+      <div class="p-2">
+        ${row.has_video_icon ? '▶️' : ''}
+      </div>
+    </div>
+  `;
+});
 
-                                <div className="grid grid-cols-2 gap-3 mb-4">
-                                    <div className="aspect-video bg-gray-100 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-200 hover:bg-gray-200 cursor-pointer transition">
-                                        <span className="text-xl">▶</span>
-                                    </div>
-                                    <div className="aspect-video bg-gray-50 rounded-lg border-2 border-dashed border-gray-200"></div>
-                                </div>
+const table = `
+  <div class="bg-white rounded-lg shadow overflow-hidden relative">
+    <div class="grid grid-cols-5 bg-gray-200 text-sm font-semibold">
+      <div class="p-2">ID</div>
+      <div class="p-2">Time</div>
+      <div class="p-2">Title</div>
+      <div class="p-2">Status</div>
+      <div class="p-2">Video</div>
+    </div>
+    ${tableRows}
 
-                                <button className="w-full bg-[#007AFF] text-white text-xs py-3 rounded-xl font-bold shadow-lg shadow-blue-200 hover:bg-blue-600 active:scale-95 transition-all">
-                                    レッスンを開始する
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            );
-        };
+    ${renderPopup()}
+  </div>
+`;
 
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
-    </script>
+// POPUP (attached to active highlighted row)
+function renderPopup() {
+  const activeRow = data.main_table_data.find(r => r.is_highlighted);
+  if (!activeRow) return "";
+
+  const index = data.main_table_data.indexOf(activeRow);
+
+  return `
+    <div class="absolute left-1/2 -translate-x-1/2 w-80 bg-white shadow-xl rounded-lg p-4 border"
+         style="top:${(index + 1) * 48}px">
+      <div class="flex justify-between items-center mb-2">
+        <h3 class="font-semibold text-blue-500">${data.popup_content.title}</h3>
+        <span class="text-gray-400 cursor-pointer">✕</span>
+      </div>
+      <div class="text-sm text-gray-600 mb-2">
+        👤 ${data.popup_content.instructor}
+      </div>
+      <div class="text-xs text-gray-400 mb-2">
+        ${data.popup_content.date}
+      </div>
+      <p class="text-sm mb-3">${data.popup_content.description}</p>
+
+      ${data.popup_content.media.image ? `
+        <div class="bg-gray-200 h-24 mb-2 rounded"></div>
+      ` : ''}
+
+      ${data.popup_content.media.video ? `
+        <div class="bg-gray-300 h-24 flex items-center justify-center rounded">
+          ▶
+        </div>
+      ` : ''}
+    </div>
+  `;
+}
+
+// RENDER
+app.innerHTML = header + table;
+</script>
+
 </body>
 </html>
