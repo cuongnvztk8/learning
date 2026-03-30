@@ -3,107 +3,133 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>学習シナリオ - Learning Scenario</title>
+    <title>学習シナリオ Pro - JSON Data Driven</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Noto Sans JP', sans-serif; }
+        .modal-shadow { box-shadow: 0 30px 60px -12px rgba(50, 50, 93, 0.25), 0 18px 36px -18px rgba(0, 0, 0, 0.3); }
+    </style>
 </head>
-<body class="bg-gray-100">
+<body class="bg-[#F7FAFC]">
     <div id="root"></div>
 
     <script type="text/babel">
-        const { CheckCircle, PlayCircle, X, ChevronRight } = lucide;
+        // 1. DỮ LIỆU JSON CHI TIẾT CỦA BẠN
+        const fullConfig = {
+            "page_config": {
+                "title": "学習シナリオ",
+                "header_bg": "#4A5568",
+                "columns": [
+                    { "id": "time", "label": "学習時間", "sub": "" },
+                    { "id": "m4", "label": "2024年 4月", "sub": "頁 目次" },
+                    { "id": "m5", "label": "2024年 5月", "sub": "頁 目次" },
+                    { "id": "m6", "label": "2024年 6月", "sub": "頁 目次" },
+                    { "id": "m7", "label": "2024年 7月", "sub": "頁 目次" },
+                    { "id": "note", "label": "備考", "sub": "" }
+                ]
+            },
+            "curriculum_data": [
+                { "id": 1, "time": "0.25", "title": "1 ひだりてのゆびばんごうを...", "status": "completed" },
+                { "id": 2, "time": "0.50", "title": "2 ゆびのうた", "status": "completed" },
+                { "id": 3, "time": "0.60", "title": "3 みぎてのゆびばんごうを...", "status": "video" },
+                { "id": 4, "time": "0.70", "title": "4 「ど」をおぼえましょう", "status": "active" },
+                { "id": 5, "time": "0.80", "title": "5 あひるのさんぽ", "status": "pending" },
+                { "id": 11, "time": "1.10", "title": "11 いちばんぼし", "status": "video" }
+            ],
+            "popup": {
+                "target_id": 4,
+                "title": "「ど」をおぼえましょう",
+                "instructor": "鈴木 太郎",
+                "role": "スキル認定インストラクター",
+                "date": "2022.07.13",
+                "desc": "この文章はダミーです。文字の大きさ、量、字間、行間等を確認するために入れています。"
+            }
+        };
 
         const App = () => {
-            const data = {
-                columns: ["2024年 4月", "2024年 5月", "2024年 6月", "2024年 7月"],
-                lessons: [
-                    { id: 1, time: "0.25", title: "1 ひだりてのゆびばんごうを...", status: "done" },
-                    { id: 2, time: "0.50", title: "2 ゆびのうた", status: "done" },
-                    { id: 3, time: "0.60", title: "3 みぎてのゆびばんごうを...", status: "video" },
-                    { id: 4, time: "0.70", title: "4 (ど)をおぼえましょう", status: "active" },
-                    { id: 5, time: "0.80", title: "5 あひるのさんぽ", status: "pending" },
-                    { id: 11, time: "1.10", title: "11 いちばんぼし", status: "video" },
-                ]
-            };
+            const { page_config, curriculum_data, popup } = fullConfig;
 
             return (
-                <div className="p-4 md:p-10 min-h-screen">
-                    <h1 className="text-center text-2xl font-bold text-blue-900 mb-8 border-b-4 border-blue-900 w-fit mx-auto pb-2">
-                        学習シナリオ
+                <div className="py-12 px-4">
+                    {/* Header Title */}
+                    <h1 className="text-center text-2xl font-bold text-[#1A365D] mb-10 relative inline-block left-1/2 -translate-x-1/2">
+                        {page_config.title}
+                        <span className="absolute bottom--2 left-0 w-full h-1 bg-[#1A365D]"></span>
                     </h1>
 
-                    <div className="max-w-6xl mx-auto bg-white shadow-2xl rounded-lg overflow-hidden relative border border-gray-300">
-                        {/* Table Header */}
-                        <div className="grid grid-cols-6 bg-[#4A5568] text-white text-center font-bold">
-                            <div className="border-r border-gray-500 py-4">学習時間</div>
-                            {data.columns.map((col, i) => (
-                                <div key={i} className="border-r border-gray-500 py-2">
-                                    <div className="text-[10px] font-normal opacity-70 italic">頁 目次</div>
-                                    <div className="text-sm">{col}</div>
+                    <div className="max-w-6xl mx-auto bg-white border border-gray-300 shadow-sm relative">
+                        {/* Dynamic Table Header */}
+                        <div className="grid grid-cols-6 bg-[#4A5568] text-white">
+                            {page_config.columns.map((col, i) => (
+                                <div key={i} className="border-r border-gray-500 py-3 text-center">
+                                    <div className="text-[10px] font-light opacity-80">{col.sub}</div>
+                                    <div className="text-sm font-bold">{col.label}</div>
                                 </div>
                             ))}
-                            <div className="py-4">備考</div>
                         </div>
 
-                        {/* Table Body */}
+                        {/* Dynamic Table Body */}
                         <div className="divide-y divide-gray-200">
-                            {data.lessons.map((lesson) => (
-                                <div key={lesson.id} className="grid grid-cols-6 items-stretch min-h-[60px]">
-                                    <div className="border-r border-gray-200 flex items-center justify-center bg-gray-50 font-bold text-blue-700">
-                                        {lesson.time}
+                            {curriculum_data.map((item) => (
+                                <div key={item.id} className="grid grid-cols-6 items-stretch min-h-[55px]">
+                                    {/* Column 1: Time */}
+                                    <div className="bg-[#EDF2F7] flex items-center justify-center font-bold text-blue-800 border-r border-gray-200">
+                                        {item.time}
                                     </div>
                                     
-                                    {/* Lesson Title Column */}
-                                    <div className={`border-r border-gray-200 p-3 flex items-center justify-between ${lesson.status === 'active' ? 'bg-orange-50' : 'bg-white'}`}>
-                                        <span className="text-xs font-semibold">{lesson.title}</span>
-                                        <div className="flex gap-1">
-                                            {lesson.status === 'done' && <span className="text-green-500">✔</span>}
-                                            {lesson.status === 'video' && <span className="text-red-500">▶</span>}
+                                    {/* Column 2: Content (Highlight logic) */}
+                                    <div className={`p-3 border-r border-gray-200 flex justify-between items-center ${item.id <= 4 ? 'bg-[#FFF5F5]' : 'bg-white'}`}>
+                                        <span className="text-xs font-bold truncate">{item.title}</span>
+                                        <div className="flex shrink-0 ml-1">
+                                            {item.status === 'completed' && <span className="text-green-500 font-bold">✔</span>}
+                                            {item.status === 'video' && <span className="text-red-500 text-xs">▶</span>}
                                         </div>
                                     </div>
 
-                                    {/* Empty Month Columns */}
-                                    {[...Array(4)].map((_, i) => (
-                                        <div key={i} className="border-r border-gray-100 bg-white"></div>
-                                    ))}
+                                    {/* Column 3-6: Empty placeholders */}
+                                    <div className="border-r border-gray-100 bg-white"></div>
+                                    <div className="border-r border-gray-100 bg-white"></div>
+                                    <div className="border-r border-gray-100 bg-white"></div>
+                                    <div className="bg-white"></div>
                                 </div>
                             ))}
                         </div>
 
-                        {/* Modal Popup (Positioned over ID 4) */}
-                        <div className="absolute top-[210px] left-[15%] md:left-[20%] w-[320px] bg-white rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.3)] border-2 border-blue-300 overflow-hidden z-50 transform hover:scale-105 transition-transform">
-                            <div className="bg-[#5AC8FA] p-3 flex justify-between items-center text-white">
-                                <span className="text-sm font-bold">「ど」をおぼえましょう</span>
-                                <div className="bg-white/20 p-1 rounded-full cursor-pointer">✕</div>
+                        {/* Modal Popup - Anchored to ID 4 */}
+                        <div className="absolute top-[215px] left-[18%] w-[320px] bg-white rounded-2xl modal-shadow border border-blue-100 overflow-hidden z-50">
+                            <div className="bg-[#5AC8FA] p-3 flex justify-between items-center text-white font-bold">
+                                <span className="text-sm">{popup.title}</span>
+                                <span className="cursor-pointer opacity-70 hover:opacity-100">✕</span>
                             </div>
                             
-                            <div className="p-5 text-center">
-                                <div className="flex items-center gap-4 mb-4 text-left">
-                                    <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-blue-500 font-bold border-2 border-blue-200">
-                                        鈴木
+                            <div className="p-6">
+                                <div className="flex items-center gap-4 mb-4">
+                                    <div className="w-12 h-12 bg-blue-50 rounded-full border-2 border-blue-200 flex items-center justify-center text-blue-400 font-bold">
+                                        Icon
                                     </div>
                                     <div>
-                                        <div className="text-[10px] text-blue-500 font-bold uppercase tracking-wider">Skill Certified Instructor</div>
-                                        <div className="font-bold text-gray-800 text-lg">鈴木 太郎</div>
-                                        <div className="text-[9px] text-gray-400 italic">Achieved: 2022.07.13</div>
+                                        <div className="text-[9px] text-blue-400 font-bold uppercase">{popup.role}</div>
+                                        <div className="font-bold text-gray-800">{popup.instructor}</div>
+                                        <div className="text-[9px] text-gray-400">{popup.date}</div>
                                     </div>
                                 </div>
                                 
-                                <p className="text-[11px] text-gray-500 leading-relaxed mb-5 text-left italic border-l-4 border-blue-100 pl-3">
-                                    この文章はダミーです。文字の大きさ、量、字間、行間等を確認するために入れています。
+                                <p className="text-[11px] text-gray-500 leading-relaxed mb-6 bg-blue-50/50 p-3 rounded-lg border-l-4 border-blue-300">
+                                    {popup.desc}
                                 </p>
 
-                                <div className="grid grid-cols-2 gap-3">
-                                    <div className="bg-gray-100 aspect-video rounded-xl flex items-center justify-center text-gray-400 border-2 border-dashed border-gray-200 hover:bg-blue-50 hover:border-blue-200 cursor-pointer">
-                                        <span className="text-2xl">▶</span>
+                                <div className="grid grid-cols-2 gap-3 mb-4">
+                                    <div className="aspect-video bg-gray-100 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-200 hover:bg-gray-200 cursor-pointer transition">
+                                        <span className="text-xl">▶</span>
                                     </div>
-                                    <div className="bg-gray-100 aspect-video rounded-xl border-2 border-dashed border-gray-200"></div>
+                                    <div className="aspect-video bg-gray-50 rounded-lg border-2 border-dashed border-gray-200"></div>
                                 </div>
-                                
-                                <button className="mt-4 w-full bg-blue-500 text-white text-xs py-2 rounded-full font-bold hover:bg-blue-600 shadow-md">
+
+                                <button className="w-full bg-[#007AFF] text-white text-xs py-3 rounded-xl font-bold shadow-lg shadow-blue-200 hover:bg-blue-600 active:scale-95 transition-all">
                                     レッスンを開始する
                                 </button>
                             </div>
